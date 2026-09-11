@@ -1,14 +1,14 @@
 {
   "name": "flycraft-bridge",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
     "start": "node index.mjs",
-    "test": "node --test test.mjs",
+    "test": "node --test test.mjs player.test.mjs",
     "smoke": "node smoke.mjs"
   },
   "dependencies": {

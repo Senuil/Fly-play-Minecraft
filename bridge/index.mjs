@@ -1,5 +1,7 @@
 import mineflayer from 'mineflayer'
-import { observe, validAction, applyAction, Lease } from './control.mjs'
+import { validAction, Lease } from './control.mjs'
+import { Player, actuate } from './player.mjs'
+import readline from 'node:readline'
 
 const neuralUrl = process.env.NEURAL_URL || 'http://127.0.0.1:8765'
 const endpoint = new URL(neuralUrl)
@@ -13,6 +15,17 @@ const bot = mineflayer.createBot({ host, port, auth,
   username: process.env.MC_USERNAME || 'FlyConnectome',
   version: process.env.MC_VERSION || '1.21.9', profilesFolder: './auth-cache' })
 let alive = false, busy = false, epoch = 0, session, seq = 0, stopped = false
+const player = new Player()
+const terminal = readline.createInterface({ input: process.stdin, terminal: false })
+terminal.on('line', line => {
+  if (line.trim() === 'quit') return shutdown('Stopped by user')
+  try {
+    const result = player.command(line)
+    if (result.changed) { epoch++; session = undefined; stop() }
+    console.log(JSON.stringify(result))
+  } catch (error) { console.error(error.message) }
+})
+console.log('Player controls: roam | follow <name> | stop | status | quit')
 const stop = () => bot.clearControlStates()
 const lease = new Lease(stop)
 const watchdog = setInterval(() => lease.check(), 50)
@@ -23,11 +36,15 @@ async function post(path, body) {
   if (!response.ok) throw new Error(`neural service: HTTP ${response.status}`)
   return response.json()
 }
-function invalidate() { alive = false; epoch++; session = undefined; stop() }
+function invalidate() { alive = false; epoch++; session = undefined; player.resetMotion(); stop() }
 bot.on('spawn', () => { invalidate(); alive = true })
 bot.on('death', invalidate)
 bot.on('physicsTick', async () => {
-  if (!alive || busy || stopped) return
+  if (!alive || stopped) return
+  // Safety runs even while a neural HTTP request is in flight.
+  const latest = player.sense(bot)
+  if (latest.hold || latest.ground.hazard || latest.ground.upperBlocked) stop()
+  if (busy) return
   busy = true
   const generation = epoch
   try {
@@ -37,15 +54,16 @@ bot.on('physicsTick', async () => {
       if (typeof reply.session !== 'string') throw new Error('Invalid session')
       session = reply.session; seq = 0
     }
-    const observation = observe(bot)
+    const observation = player.sense(bot)
     const current = ++seq
     const action = await post('/step', { protocol: 1, session, seq: current, observation: observation.neural })
     if (generation !== epoch || !alive || stopped) return
     if (!validAction(action, session, current)) throw new Error('Invalid or stale neural action')
     // Recheck geometry at actuation time, since the request may have taken time.
-    await applyAction(bot, action, observe(bot).blocked)
+    const command = player.decide(bot, action, player.sense(bot))
+    await actuate(bot, command)
     lease.renew()
-    if (current % 20 === 0) console.log(JSON.stringify({ seq: current, ...action }))
+    if (current % 20 === 0) console.log(JSON.stringify({ seq: current, ...action, player: player.lastStatus }))
   } catch (error) {
     stop(); session = undefined
     console.error(error.message)
@@ -53,11 +71,11 @@ bot.on('physicsTick', async () => {
 })
 function shutdown(reason) {
   if (stopped) return
-  stopped = true; invalidate(); clearInterval(watchdog)
+  stopped = true; invalidate(); clearInterval(watchdog); terminal.close()
   console.error(String(reason)); bot.quit()
 }
 bot.on('kicked', reason => shutdown(JSON.stringify(reason)))
 bot.on('error', error => shutdown(error.message))
-bot.on('end', () => { stopped = true; invalidate(); clearInterval(watchdog) })
+bot.on('end', () => { stopped = true; invalidate(); clearInterval(watchdog); terminal.close() })
 process.on('SIGINT', () => shutdown('Stopped by user'))
 process.on('SIGTERM', () => shutdown('Stopped by user'))

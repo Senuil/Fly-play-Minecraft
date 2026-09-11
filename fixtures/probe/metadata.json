@@ -1,0 +1,15 @@
+{
+  "dataset_version": "FlyWire-783-Shiu",
+  "source": "https://github.com/philshiu/Drosophila_brain_model",
+  "source_sha256": {
+    "completeness": "bbb847a4cc2caaa7a16349722d220c087317b946d148d4d592d94d250617a311",
+    "connectivity": "efeb23fb99098e9c390f6869969b2a121a2ee92c833cfc45ecb2c1d8e1af0347"
+  },
+  "selection": "six-neuron non-anatomical connectivity probe; all induced edges retained",
+  "dynamics": "experimental Euler LIF; not validated paper reproduction",
+  "orientation": "post,pre",
+  "weight_unit": "mV",
+  "synapse_gain_mV": 0.275,
+  "neurons": 6,
+  "edges": 6
+}

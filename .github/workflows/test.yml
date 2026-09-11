@@ -1,0 +1,22 @@
+name: prototype-tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: bridge/package-lock.json
+      - run: python -m pip install -r requirements-tested.txt
+      - run: python -m pip install --no-deps -e .
+      - run: npm --prefix bridge ci
+      - run: python -m unittest discover -s tests -v
+      - run: npm --prefix bridge test
+      - run: python scripts/test_minecraft.py

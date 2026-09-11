@@ -1,0 +1,20 @@
+{
+  "name": "flycraft-bridge",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node index.mjs",
+    "test": "node --test test.mjs",
+    "smoke": "node smoke.mjs"
+  },
+  "dependencies": {
+    "mineflayer": "4.39.0"
+  },
+  "devDependencies": {
+    "flying-squid": "1.12.0"
+  }
+}

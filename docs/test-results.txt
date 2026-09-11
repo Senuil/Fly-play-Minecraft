@@ -1,0 +1,25 @@
+test_node_python_closed_loop (test_bridge_http.BridgeHTTPTest.test_node_python_closed_loop) ... ok
+test_sessions_sequence_and_malformed_inputs (test_core.HTTPTests.test_sessions_sequence_and_malformed_inputs) ... ok
+test_causal_connection_ablation (test_core.NeuralTests.test_causal_connection_ablation) ... ok
+test_import_preserves_ids_sign_orientation_duplicates (test_core.NeuralTests.test_import_preserves_ids_sign_orientation_duplicates) ... ok
+test_invalid_observation (test_core.NeuralTests.test_invalid_observation) ... ok
+test_no_input_no_output (test_core.NeuralTests.test_no_input_no_output) ... ok
+test_quiescence_and_seed (test_core.NeuralTests.test_quiescence_and_seed) ... ok
+test_real_edges_drive_bidirectional_actions_and_ablation (test_real_probe.RealProbeTests.test_real_edges_drive_bidirectional_actions_and_ablation) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 2.098s
+
+OK
+{"test":"http-neural-adapter","moved":true,"yaw":-2.2012499999999995,"minecraft_server":false}
+✔ yaw sign and neural turn command agree (1.305808ms)
+✔ sensor detects left wall and unloaded terrain (0.418198ms)
+✔ invalid / stale actions rejected and lease expires (0.242977ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 85.91574

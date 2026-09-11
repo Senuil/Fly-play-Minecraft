@@ -1,0 +1,6 @@
+{
+  "dataset_version": "FlyWire-783-Shiu",
+  "interpretation": "Fill with version-matched, anatomically verified string root IDs; empty lists deliberately rejected",
+  "inputs": {"drive": [], "obstacle_left": [], "obstacle_right": []},
+  "outputs": {"forward": [], "turn_left": [], "turn_right": []}
+}

@@ -1,0 +1,26 @@
+{
+  "dataset_version": "FlyWire-783-Shiu",
+  "interpretation": "ARTIFICIAL I/O on real induced edges; no anatomical motor claim",
+  "inputs": {
+    "drive": [
+      "720575940622132545"
+    ],
+    "obstacle_left": [
+      "720575940625959667"
+    ],
+    "obstacle_right": [
+      "720575940621619627"
+    ]
+  },
+  "outputs": {
+    "forward": [
+      "720575940628908548"
+    ],
+    "turn_right": [
+      "720575940626979621"
+    ],
+    "turn_left": [
+      "720575940606756030"
+    ]
+  }
+}
